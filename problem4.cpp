@@ -1,68 +1,76 @@
 #include <iostream>
-#include <vector>
-
 using namespace std;
 
-void ascSort(vector<int>& arr, int start, int end) {
-    for (int i = start + 1; i <= end; ++i) {
-        int key = arr[i];
-        int j = i - 1;
-        while (j >= start && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j--;
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedList {
+private:
+    Node* head;
+
+public:
+    LinkedList() : head(nullptr) {}
+
+    ~LinkedList() {
+        Node* current = head;
+        while (current) {
+            Node* next = current->next;
+            delete current;
+            current = next;
         }
-        arr[j + 1] = key;
+        head = nullptr;
     }
-}
 
-void descSort(vector<int>& arr, int start, int end) {
-    for (int i = start + 1; i <= end; ++i) {
-        int key = arr[i];
-        int j = i - 1;
-        while (j >= start && arr[j] < key) {
-            arr[j + 1] = arr[j];
-            j--;
+    void push_back(int val) {
+        Node* newNode = new Node(val);
+        if (!head) { head = newNode; return; }
+        Node* current = head;
+        while (current->next) { current = current->next; }
+        current->next = newNode;
+    }
+
+    void sortAscending() {
+        if (!head || !head->next) return;
+        bool swapped;
+        Node* ptr1;
+        Node* lptr = nullptr;
+        do {
+            swapped = false;
+            ptr1 = head;
+            while (ptr1->next != lptr) {
+                if (ptr1->data > ptr1->next->data) {
+                    swap(ptr1->data, ptr1->next->data);
+                    swapped = true;
+                }
+                ptr1 = ptr1->next;
+            }
+            lptr = ptr1;
+        } while (swapped);
+    }
+
+    void printList() {
+        Node* current = head;
+        while (current) {
+            cout << current->data;
+            if (current->next) cout << " ";
+            current = current->next;
         }
-        arr[j + 1] = key;
+        cout << endl;
     }
-}
-
-void sortAround(vector<int>& arr, int v) {
-    int index = -1;
-    for (int i = 0; i < arr.size(); ++i) {
-        if (arr[i] == v) {
-            index = i;
-            break;
-        }
-    }
-
-    if (index == -1) {
-        cout << "Value not found" << endl;
-        return;
-    }
-
-    descSort(arr, 0, index - 1);
-    ascSort(arr, index + 1, arr.size() - 1);
-
-    for (int i = 0; i < arr.size(); ++i) {
-        cout << arr[i];
-        if (i != arr.size() - 1) {
-            cout << " ";
-        }
-    }
-    cout << endl;
-}
+};
 
 int main() {
-    int n, v;
+    LinkedList list;
+    int n, val;
     cin >> n;
-    vector<int> arr(n);
     for (int i = 0; i < n; ++i) {
-        cin >> arr[i];
+        cin >> val;
+        list.push_back(val);
     }
-    cin >> v;
-
-    sortAround(arr, v);
-
+    list.sortAscending();
+    list.printList();
     return 0;
 }
